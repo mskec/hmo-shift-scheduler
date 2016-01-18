@@ -12,13 +12,41 @@ import java.util.Map;
  */
 public class Validator {
   public int validate(Instance instance, Solution solution) {
+    // hard constraints
     if (!validateShiftRotation(instance, solution)) {
-      return Integer.MAX_VALUE; // hard constraint
+      return Integer.MAX_VALUE;
     }
     if (!validateMaxShifts(instance, solution)) {
-      return Integer.MAX_VALUE; // hard constraint
+      return Integer.MAX_VALUE;
     }
+    if (!validateTotalMinutes(instance, solution)) {
+      return Integer.MAX_VALUE;
+    }
+
+    // soft constraints
+    // TODO
     return 0; // TODO
+  }
+
+  private boolean validateTotalMinutes(Instance instance, Solution solution) {
+    int days = solution.getNumberOfDays();
+    Map<String, Employee> employees = instance.getEmployees();
+    Map<String, Shift> shifts = instance.getShifts();
+    for (String employeeId : solution.getEmployeeIds()) {
+      // for each employee
+      int minutesCount = 0;
+      for (int i = 0; i < days; i++) {
+        // for each day
+        String shift = solution.getShift(employeeId, i);
+        int length = shifts.get(shift).getLength();
+        minutesCount += length;
+      }
+      Employee employee = employees.get(employeeId);
+      if (minutesCount < employee.getMinTotalMinutes() || minutesCount > employee.getMaxTotalMinutes()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private boolean validateMaxShifts(Instance instance, Solution solution) {
