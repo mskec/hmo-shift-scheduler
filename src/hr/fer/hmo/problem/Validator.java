@@ -1,10 +1,12 @@
 package hr.fer.hmo.problem;
 
+import hr.fer.hmo.data.DaysOff;
 import hr.fer.hmo.data.Employee;
 import hr.fer.hmo.data.Instance;
 import hr.fer.hmo.data.Shift;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,7 +33,27 @@ public class Validator {
     if (!validateMaxWeekends(instance, solution)) {
       numberOfBrokenConstraints++;
     }
+    if (!validateDaysOff(instance, solution)) {
+      numberOfBrokenConstraints++;
+    }
     return numberOfBrokenConstraints;
+  }
+
+
+  private boolean validateDaysOff(Instance instance, Solution solution) {
+    Map<String, DaysOff> employeeDaysOff = instance.getEmployeeDaysOff();
+    for (String employeeId : solution.getEmployeeIds()) {
+      // for each employee
+      List<Integer> daysOff = employeeDaysOff.get(employeeId).getDaysOff();
+      for (Integer dayOff : daysOff) {
+        String shift = solution.getShift(employeeId, dayOff);
+        if (shift != null) {
+          // employee is working on a day off
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
 
