@@ -1,0 +1,44 @@
+Instance # Sadrzi sve dolje podatke
+
+int horizon
+
+Shift {
+  int length
+  Set<String> notFollowingShifts
+}
+Map<String, Shift>
+
+Staff {
+  String id
+  Map<String (staffId), Integer (max days for shift)> maxShifts
+  int maxTotalMinutes
+  int minTotalMinutes
+  int maxConsecutiveShifts
+  int minConsecutiveShifts
+  int minConsecutiveDaysOff
+  int maxWeekends
+}
+
+DaysOff {
+  String employeeId
+  List<Integer> daysOff
+}
+Map<String (employeeId), DaysOff>
+
+ShiftRequest {
+  String employeeId
+  int day
+  String shiftId
+  int weight
+}
+List<ShiftRequest> shiftOnRequests
+List<ShiftRequest> shiftOffRequests
+
+ShiftCover {
+  int day
+  String shiftId
+  int requirement
+  int weightUnder
+  int weightOver
+}
+List<ShiftCover>
