@@ -11,28 +11,54 @@ import java.util.Map;
  * Created by dstankovic on 1/18/16.
  */
 public class Validator {
-  public int validate(Instance instance, Solution solution) {
-    // hard constraints
+  public int validateHardConstraints(Instance instance, Solution solution) {
+    int numberOfBrokenConstraints = 0;
     if (!validateShiftRotation(instance, solution)) {
-      return Integer.MAX_VALUE;
+      numberOfBrokenConstraints++;
     }
     if (!validateMaxShifts(instance, solution)) {
-      return Integer.MAX_VALUE;
+      numberOfBrokenConstraints++;
     }
     if (!validateTotalMinutes(instance, solution)) {
-      return Integer.MAX_VALUE;
+      numberOfBrokenConstraints++;
     }
     if (!validateConsecutiveShifts(instance, solution)) {
-      return Integer.MAX_VALUE;
+      numberOfBrokenConstraints++;
     }
     if (!validateConsecutiveDaysOff(instance, solution)) {
-      return Integer.MAX_VALUE;
+      numberOfBrokenConstraints++;
     }
-
-    // soft constraints
-    // TODO
-    return 0; // TODO
+    if (!validateMaxWeekends(instance, solution)) {
+      numberOfBrokenConstraints++;
+    }
+    return numberOfBrokenConstraints;
   }
+
+
+  private boolean validateMaxWeekends(Instance instance, Solution solution) {
+    int days = solution.getNumberOfDays();
+    Map<String, Employee> employees = instance.getEmployees();
+    for (String employeeId : solution.getEmployeeIds()) {
+      // for each employee
+      Employee employee = employees.get(employeeId);
+      int maxWeekends = employee.getMaxWeekends();
+      int workingWeekends = 0;
+      for (int i = 5; i < days; i+=7) {
+        // for each saturday
+        String saturdayShift = solution.getShift(employeeId, i);
+        String sundayShift = solution.getShift(employeeId, i+1);
+        if (saturdayShift != null || sundayShift != null) {
+          // working weekend
+          workingWeekends++;
+        }
+      }
+      if (workingWeekends > maxWeekends) {
+        return false;
+      }
+    }
+    return true;
+  }
+
 
   private boolean validateConsecutiveDaysOff(Instance instance, Solution solution) {
     int days = solution.getNumberOfDays();
@@ -67,6 +93,7 @@ public class Validator {
     return true;
   }
 
+
   private boolean validateConsecutiveShifts(Instance instance, Solution solution) {
     int days = solution.getNumberOfDays();
     Map<String, Employee> employees = instance.getEmployees();
@@ -100,6 +127,7 @@ public class Validator {
     return true;
   }
 
+
   private boolean validateTotalMinutes(Instance instance, Solution solution) {
     int days = solution.getNumberOfDays();
     Map<String, Employee> employees = instance.getEmployees();
@@ -120,6 +148,7 @@ public class Validator {
     }
     return true;
   }
+
 
   private boolean validateMaxShifts(Instance instance, Solution solution) {
     int days = solution.getNumberOfDays();
@@ -145,6 +174,7 @@ public class Validator {
     }
     return true;
   }
+
 
   private boolean validateShiftRotation(Instance instance, Solution solution) {
     Map<String, Shift> shifts = instance.getShifts();
