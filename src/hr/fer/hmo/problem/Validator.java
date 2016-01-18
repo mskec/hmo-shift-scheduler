@@ -1,8 +1,10 @@
 package hr.fer.hmo.problem;
 
+import hr.fer.hmo.data.Employee;
 import hr.fer.hmo.data.Instance;
 import hr.fer.hmo.data.Shift;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,8 +15,35 @@ public class Validator {
     if (!validateShiftRotation(instance, solution)) {
       return Integer.MAX_VALUE; // hard constraint
     }
-
+    if (!validateMaxShifts(instance, solution)) {
+      return Integer.MAX_VALUE; // hard constraint
+    }
     return 0; // TODO
+  }
+
+  private boolean validateMaxShifts(Instance instance, Solution solution) {
+    int days = solution.getNumberOfDays();
+    Map<String, Employee> employees = instance.getEmployees();
+    for (String employeeId : solution.getEmployeeIds()) {
+      // for each employee
+      Map<String, Integer> shiftsCount = new HashMap<>(); // shift -> shiftsCount
+      for (int i = 0; i < days; i++) {
+        // for each day
+        String shift = solution.getShift(employeeId, i);
+        if (!shiftsCount.containsKey(shift)) {
+          shiftsCount.put(shift, 0);
+        }
+        shiftsCount.put(shift, shiftsCount.get(shift) + 1);
+      }
+      Employee employee = employees.get(employeeId);
+      Map<String, Integer> maxShifts = employee.getMaxShifts();
+      for (String shift : shiftsCount.keySet()) {
+        if (shiftsCount.get(shift) > maxShifts.get(shift)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   private boolean validateShiftRotation(Instance instance, Solution solution) {
