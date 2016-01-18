@@ -25,10 +25,46 @@ public class Validator {
     if (!validateConsecutiveShifts(instance, solution)) {
       return Integer.MAX_VALUE;
     }
+    if (!validateConsecutiveDaysOff(instance, solution)) {
+      return Integer.MAX_VALUE;
+    }
 
     // soft constraints
     // TODO
     return 0; // TODO
+  }
+
+  private boolean validateConsecutiveDaysOff(Instance instance, Solution solution) {
+    int days = solution.getNumberOfDays();
+    Map<String, Employee> employees = instance.getEmployees();
+    for (String employeeId : solution.getEmployeeIds()) {
+      // for each employee
+      Employee employee = employees.get(employeeId);
+      int minConsecutiveDaysOff = employee.getMinConsecutiveDaysOff();
+      int streak = 0;
+      int start = 0;
+      while (solution.getShift(employeeId, start) == null) {
+        start++;
+      }
+      for (int i = start; i < days; i++) {
+        // for each day
+        String shift = solution.getShift(employeeId, i);
+        if (shift != null) {
+          // employee works on this day
+          if (streak > 0) {
+            // end of streak
+            if (streak < minConsecutiveDaysOff) {
+              return false;
+            }
+            streak = 0;
+          }
+        } else {
+          // employee does not work on this day
+          streak++;
+        }
+      }
+    }
+    return true;
   }
 
   private boolean validateConsecutiveShifts(Instance instance, Solution solution) {
