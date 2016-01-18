@@ -3,14 +3,15 @@ Instance # Sadrzi sve dolje podatke
 int horizon
 
 Shift {
+  String shiftId
   int length
   Set<String> notFollowingShifts
 }
 Map<String, Shift>
 
-Staff {
+Employee {
   String id
-  Map<String (staffId), Integer (max days for shift)> maxShifts
+  Map<String (shiftId), Integer (max days for shift)> maxShifts
   int maxTotalMinutes
   int minTotalMinutes
   int maxConsecutiveShifts
