@@ -37,6 +37,32 @@ public class Validator {
   }
 
 
+  private int validateShiftCovers(Instance instance, Solution solution) {
+    List<ShiftCover> shiftCovers = instance.getShiftCovers();
+    int totalWeight = 0;
+    for (ShiftCover shiftCover : shiftCovers) {
+      int day = shiftCover.getDay();
+      String shift = shiftCover.getShiftId();
+      int requirement = shiftCover.getRequirement();
+      int count = 0;
+      for (String employeeId : solution.getEmployeeIds()) {
+        // for each employee
+        if (shift.equals(solution.getShift(employeeId, day))) {
+          count++;
+        }
+      }
+      if (count < requirement) {
+        // not enough employees in a shift
+        totalWeight += shiftCover.getWeightUnder();
+      } else if (count > requirement) {
+        // too many employees in a shift
+        totalWeight += shiftCover.getWeightOver();
+      }
+    }
+    return totalWeight;
+  }
+
+
   private int validateShiftOffRequests(Instance instance, Solution solution) {
     List<ShiftRequest> shiftRequests = instance.getShiftOffRequests();
     int totalWeight = 0;
