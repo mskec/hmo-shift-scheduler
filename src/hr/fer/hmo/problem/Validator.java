@@ -10,6 +10,12 @@ import java.util.Map;
  * Created by dstankovic on 1/18/16.
  */
 public class Validator {
+  /**
+   *
+   * @param instance problem instance
+   * @param solution problem solution
+   * @return Number of broken hard constraints
+   */
   public int validateHardConstraints(Instance instance, Solution solution) {
     int numberOfBrokenConstraints = 0;
     if (!validateShiftRotation(instance, solution)) {
@@ -34,6 +40,21 @@ public class Validator {
       numberOfBrokenConstraints++;
     }
     return numberOfBrokenConstraints;
+  }
+
+
+  /**
+   *
+   * @param instance problem instance
+   * @param solution problem solution
+   * @return Total weight of all broken soft constraints
+   */
+  public int validateSoftConstraints(Instance instance, Solution solution) {
+    int totalCount = 0;
+    totalCount += validateShiftOnRequests(instance, solution);
+    totalCount += validateShiftOffRequests(instance, solution);
+    totalCount += validateShiftCovers(instance, solution);
+    return totalCount;
   }
 
 
