@@ -1,9 +1,6 @@
 package hr.fer.hmo.problem;
 
-import hr.fer.hmo.data.DaysOff;
-import hr.fer.hmo.data.Employee;
-import hr.fer.hmo.data.Instance;
-import hr.fer.hmo.data.Shift;
+import hr.fer.hmo.data.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +34,23 @@ public class Validator {
       numberOfBrokenConstraints++;
     }
     return numberOfBrokenConstraints;
+  }
+
+
+  private int validateShiftOnRequests(Instance instance, Solution solution) {
+    List<ShiftRequest> shiftRequests = instance.getShiftOnRequests();
+    int totalWeight = 0;
+    for (ShiftRequest shiftRequest : shiftRequests) {
+      // for each shift request
+      String employeeId = shiftRequest.getEmployeeId();
+      int day = shiftRequest.getDay();
+      String requestedShift = shiftRequest.getShiftId();
+      String shift = solution.getShift(employeeId, day);
+      if (!requestedShift.equals(shift)) {
+        totalWeight += shiftRequest.getWeight();
+      }
+    }
+    return totalWeight;
   }
 
 
