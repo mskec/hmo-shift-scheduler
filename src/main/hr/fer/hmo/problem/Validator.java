@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Validator {
+  private static final boolean PRINT = false;
+
   /**
    *
    * @param instance problem instance
@@ -17,31 +19,31 @@ public class Validator {
     int numberOfBrokenConstraints = 0;
     if (!validateShiftRotation(instance, solution)) {
       numberOfBrokenConstraints++;
-      System.out.println("Validator|SHIFT_ROTATION");
+      if (PRINT) System.out.println("Validator|SHIFT_ROTATION");
     }
     if (!validateMaxShifts(instance, solution)) {
       numberOfBrokenConstraints++;
-      System.out.println("Validator|MAX_SHIFTS");
+      if (PRINT) System.out.println("Validator|MAX_SHIFTS");
     }
     if (!validateTotalMinutes(instance, solution)) {
       numberOfBrokenConstraints++;
-//      System.out.println("Validator|TOTAL_MINUTES");
+      if (PRINT) System.out.println("Validator|TOTAL_MINUTES");
     }
     if (!validateConsecutiveShifts(instance, solution)) {
       numberOfBrokenConstraints++;
-//      System.out.println("Validator|CONSECUTIVE_SHIFTS");
+      if (PRINT) System.out.println("Validator|CONSECUTIVE_SHIFTS");
     }
     if (!validateConsecutiveDaysOff(instance, solution)) {
       numberOfBrokenConstraints++;
-//      System.out.println("Validator|CONSECUTIVE_DAYS_OFF");
+      if (PRINT) System.out.println("Validator|CONSECUTIVE_DAYS_OFF");
     }
     if (!validateMaxWeekends(instance, solution)) {
       numberOfBrokenConstraints++;
-//      System.out.println("Validator|MAX_WEEKENDS");
+      if (PRINT) System.out.println("Validator|MAX_WEEKENDS");
     }
     if (!validateDaysOff(instance, solution)) {
       numberOfBrokenConstraints++;
-      System.out.println("Validator|DAYS_OFF");
+      if (PRINT) System.out.println("Validator|DAYS_OFF");
     }
     return numberOfBrokenConstraints;
   }
@@ -261,7 +263,7 @@ public class Validator {
         streak++;
       }
     }
-    if (streak < minConsecutiveShifts || streak > maxConsecutiveShifts) {
+    if (streak > 0 && (streak < minConsecutiveShifts || streak > maxConsecutiveShifts)) {
       return false;
     }
     return true;
