@@ -17,6 +17,7 @@ import java.util.Map;
 public class SmartSolutionGenerator implements SolutionGenerator {
   @Override
   public void generate(Instance instance, Solution solution, String employeeId) {
+    Validator validator = new Validator();
     List<Integer> daysOff = instance.getEmployeeDaysOff(employeeId);
     Employee employee = instance.getEmployee(employeeId);
     WorkingDaysDistributor workingDaysDistributor = new WorkingDaysDistributor();
@@ -40,11 +41,22 @@ public class SmartSolutionGenerator implements SolutionGenerator {
         int offset = 0;
         for (int i = 0; i < size; i+=2) {
           Integer daysOn = list.get(i);
-          setSolution(solution, employeeId, lastDayOff+offset+1, daysOn, shiftDistributor, shiftsCounter);
+          String shiftId = shiftDistributor.distributeShift(shiftsCounter);
+          shiftsCounter.put(shiftId, shiftsCounter.get(shiftId)-daysOn);
+          if (daysOn > 5) {
+            System.out.println("Error");
+          }
+          setSolution(solution, employeeId, lastDayOff+offset+1, daysOn, shiftId);
           offset += daysOn;
+          boolean broken = !validator.validateConsecutiveShifts(instance, solution, employeeId);
+          if (broken) {
+            System.out.println("Broken");
+          }
           if (i < size - 1) {
             // not last one
-            offset += list.get(i+1);
+            int daysOffCount = list.get(i+1);
+            setSolution(solution, employeeId, lastDayOff+offset+1, daysOffCount, null);
+            offset += daysOffCount;
           }
         }
       }
@@ -52,11 +64,8 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     }
   }
 
-  private void setSolution(Solution solution, String employeeId, int firstDay, int daysOn,
-                           ShiftDistributor shiftDistributor, Map<String, Integer> shiftsCounter) {
+  private void setSolution(Solution solution, String employeeId, int firstDay, int daysOn, String shiftId) {
     for (int i = 0; i < daysOn; i++) {
-      String shiftId = shiftDistributor.distributeShift(shiftsCounter);
-      shiftsCounter.put(shiftId, shiftsCounter.get(shiftId)-1);
       solution.setShift(employeeId, firstDay+i, shiftId);
     }
   }
@@ -67,13 +76,13 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     String employeeId = "A";
     employeeIds.add(employeeId);
     Instance instance = InstanceParser.parse("instance.txt");
-    Solution solution = new Solution(employeeIds, instance.getHorizon());
     Validator validator = new Validator();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 1000000; i++) {
+      Solution solution = new Solution(employeeIds, instance.getHorizon());
       smartSolutionGenerator.generate(instance, solution, employeeId);
       int brokenConstraintsCount = validator.validateHardConstraints(instance, solution);
-      if (brokenConstraintsCount > 3) {
-        System.out.println(brokenConstraintsCount);
+      if (brokenConstraintsCount <= 0) {
+        System.out.println(brokenConstraintsCount + "  ----   " + validator.validateSoftConstraints(instance, solution));
         System.out.println(solution.toString());
       }
     }
