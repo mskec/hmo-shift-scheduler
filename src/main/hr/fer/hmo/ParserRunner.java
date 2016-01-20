@@ -6,12 +6,12 @@ import java.io.FileNotFoundException;
 
 public class ParserRunner {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        System.out.println("Parser started...");
+  public static void main(String[] args) throws FileNotFoundException {
+    System.out.println("Parser started...");
 
-        Instance instance = InstanceParser.parse("instance.txt");
+    Instance instance = InstanceParser.parse("instance.txt");
 
-        System.out.println("Parsing done!");
-    }
+    System.out.println("Parsing done!");
+  }
 
 }

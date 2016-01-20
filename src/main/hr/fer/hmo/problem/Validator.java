@@ -17,24 +17,31 @@ public class Validator {
     int numberOfBrokenConstraints = 0;
     if (!validateShiftRotation(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|SHIFT_ROTATION");
     }
     if (!validateMaxShifts(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|MAX_SHIFTS");
     }
     if (!validateTotalMinutes(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|TOTAL_MINUTES");
     }
     if (!validateConsecutiveShifts(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|CONSECUTIVE_SHIFTS");
     }
     if (!validateConsecutiveDaysOff(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|CONSECUTIVE_DAYS_OFF");
     }
     if (!validateMaxWeekends(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|MAX_WEEKENDS");
     }
     if (!validateDaysOff(instance, solution)) {
       numberOfBrokenConstraints++;
+      System.out.println("Validator|DAYS_OFF");
     }
     return numberOfBrokenConstraints;
   }
@@ -234,8 +241,14 @@ public class Validator {
       int minutesCount = 0;
       for (int i = 0; i < days; i++) {
         // for each day
-        String shift = solution.getShift(employeeId, i);
-        int length = shifts.get(shift).getLength();
+        String shiftId = solution.getShift(employeeId, i);
+
+        // Do not count if day off
+        if (shiftId == null) {
+          continue;
+        }
+
+        int length = shifts.get(shiftId).getLength();
         minutesCount += length;
       }
       Employee employee = employees.get(employeeId);
@@ -255,11 +268,17 @@ public class Validator {
       Map<String, Integer> shiftsCount = new HashMap<>(); // shift -> shiftsCount
       for (int i = 0; i < days; i++) {
         // for each day
-        String shift = solution.getShift(employeeId, i);
-        if (!shiftsCount.containsKey(shift)) {
-          shiftsCount.put(shift, 0);
+        String shiftId = solution.getShift(employeeId, i);
+
+        // Do not count days off
+        if (shiftId == null) {
+          continue;
         }
-        shiftsCount.put(shift, shiftsCount.get(shift) + 1);
+
+        if (!shiftsCount.containsKey(shiftId)) {
+          shiftsCount.put(shiftId, 0);
+        }
+        shiftsCount.put(shiftId, shiftsCount.get(shiftId) + 1);
       }
       Employee employee = employees.get(employeeId);
       Map<String, Integer> maxShifts = employee.getMaxShifts();

@@ -6,9 +6,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by dstankovic on 1/20/16.
- */
 public class ShiftDistributerTest {
 
   @Test

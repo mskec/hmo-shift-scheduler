@@ -3,9 +3,6 @@ package hr.fer.hmo.problem;
 import java.util.Map;
 import java.util.Random;
 
-/**
- * Created by dstankovic on 1/20/16.
- */
 public class ShiftDistributer {
   private Random rand = new Random();
 

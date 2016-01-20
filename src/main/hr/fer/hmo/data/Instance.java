@@ -1,5 +1,6 @@
 package hr.fer.hmo.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,8 +34,24 @@ public class Instance {
     return shifts;
   }
 
+  public List<String> getShiftIds() {
+    return new ArrayList<>(shifts.keySet());
+  }
+
+  public Employee getEmployee(String employeeId) {
+    return employees.get(employeeId);
+  }
+
   public Map<String, Employee> getEmployees() {
     return employees;
+  }
+
+  public List<String> getEmployeeIds() {
+    return new ArrayList<>(employees.keySet());
+  }
+
+  public List<Integer> getEmployeeDaysOff(String employeeId) {
+    return employeeDaysOff.get(employeeId).getDaysOff();
   }
 
   public Map<String, DaysOff> getEmployeeDaysOff() {
