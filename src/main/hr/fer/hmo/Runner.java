@@ -25,7 +25,7 @@ public class Runner {
     for (int i = 0; i < 100000; i++) {
       Solution solution = new SolutionBuilder(instance, smartSolutionGenerator).build();
 
-      smartSolutionGenerator.generate(instance, solution, employeeId);
+//      smartSolutionGenerator.generate(instance, solution, employeeId);
 
       if (!validator.validateShiftRotation(instance, solution, employeeId)) {
         System.out.println("VIOLATED|SHIFT_ROTATION");

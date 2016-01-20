@@ -1,29 +1,37 @@
 package hr.fer.hmo.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Instance {
 
   private int horizon;
   private Map<String, Shift> shifts;              // <shiftId, Shift>
-  private Map<String, Employee> employees;        // <employeeId, Employee>
+  private List<Employee> employeesList;
+  private Map<String, Employee> employees;     // <employeeId, Employee>
   private Map<String, DaysOff> employeeDaysOff;   // <employeeId, DaysOff>
   private List<ShiftRequest> shiftOnRequests;
   private List<ShiftRequest> shiftOffRequests;
   private List<ShiftCover> shiftCovers;
 
-  public Instance(int horizon, Map<String, Shift> shifts, Map<String, Employee> employees, Map<String, DaysOff> employeeDaysOff,
+  public Instance(int horizon, Map<String, Shift> shifts, List<Employee> employeesList, Map<String, DaysOff> employeeDaysOff,
                   List<ShiftRequest> shiftOnRequests, List<ShiftRequest> shiftOffRequests, List<ShiftCover> shiftCovers) {
 
     this.horizon = horizon;
     this.shifts = shifts;
-    this.employees = employees;
+    this.employeesList = employeesList;
     this.employeeDaysOff = employeeDaysOff;
     this.shiftOnRequests = shiftOnRequests;
     this.shiftOffRequests = shiftOffRequests;
     this.shiftCovers = shiftCovers;
+
+    this.employees = new HashMap<>(employeesList.size());
+    for (Employee employee : employeesList) {
+      this.employees.put(employee.getEmployeeId(), employee);
+    }
   }
 
   public int getHorizon() {
@@ -42,12 +50,16 @@ public class Instance {
     return employees.get(employeeId);
   }
 
+  public List<Employee> getEmployeesList() {
+    return employeesList;
+  }
+
   public Map<String, Employee> getEmployees() {
     return employees;
   }
 
   public List<String> getEmployeeIds() {
-    return new ArrayList<>(employees.keySet());
+    return employeesList.stream().map(Employee::getEmployeeId).collect(Collectors.toList());
   }
 
   public List<Integer> getEmployeeDaysOff(String employeeId) {

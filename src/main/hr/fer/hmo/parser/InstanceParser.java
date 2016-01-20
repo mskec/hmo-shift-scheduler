@@ -31,7 +31,7 @@ public class InstanceParser {
 
     checkSection(nextLine(in), "SECTION_SHIFTS");
     Map<String, Shift> shifts = parseShifts(in);
-    Map<String, Employee> employees = parseEmployees(in);
+    List<Employee> employees = parseEmployees(in);
     Map<String, DaysOff> daysOff = parseDaysOff(in);
 
     List<ShiftRequest> shiftOnRequests = parseShiftRequests(in, "SECTION_SHIFT_OFF_REQUESTS");
@@ -110,8 +110,8 @@ public class InstanceParser {
     return daysOffMap;
   }
 
-  private static Map<String, Employee> parseEmployees(Scanner in) {
-    Map<String, Employee> employees = new HashMap<>();
+  private static List<Employee> parseEmployees(Scanner in) {
+    List<Employee> employees = new ArrayList<>();
 
     while (true) {
       String[] lineTokens = nextLine(in).trim().split(",");
@@ -138,7 +138,7 @@ public class InstanceParser {
       int maxWeekends = Integer.parseInt(lineTokens[7]);
 
       Employee employee = new Employee(employeeId, maxShifts, maxTotalMinutes, minTotalMinutes, maxConsecutiveShifts, minConsecutiveShifts, minConsecutiveDaysOff, maxWeekends);
-      employees.put(employeeId, employee);
+      employees.add(employee);
     }
 
     return employees;

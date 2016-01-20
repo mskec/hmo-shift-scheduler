@@ -55,7 +55,6 @@ public class SmartSolutionGenerator1 implements SolutionGenerator {
     }
 
     Map<String, Integer> validEmployeeShifts = new HashMap<>();
-
     employeeShifts.keySet().stream()
         .filter(shiftId -> !previousShift.getNotFollowingShifts().contains(shiftId))
         .forEach(shiftId -> validEmployeeShifts.put(shiftId, employeeShifts.get(shiftId)));
