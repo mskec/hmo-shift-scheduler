@@ -74,10 +74,10 @@ public class Validator {
       }
       if (count < requirement) {
         // not enough employees in a shift
-        totalWeight += shiftCover.getWeightUnder();
+        totalWeight += (requirement - count) * shiftCover.getWeightUnder();
       } else if (count > requirement) {
         // too many employees in a shift
-        totalWeight += shiftCover.getWeightOver();
+        totalWeight += (count - requirement) * shiftCover.getWeightOver();
       }
     }
     return totalWeight;
