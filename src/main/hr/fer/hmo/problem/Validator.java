@@ -17,7 +17,7 @@ public class Validator {
     int numberOfBrokenConstraints = 0;
     if (!validateShiftRotation(instance, solution)) {
       numberOfBrokenConstraints++;
-//      System.out.println("Validator|SHIFT_ROTATION");
+      System.out.println("Validator|SHIFT_ROTATION");
     }
     if (!validateMaxShifts(instance, solution)) {
       numberOfBrokenConstraints++;
@@ -357,9 +357,15 @@ public class Validator {
   public boolean validateShiftRotation(Instance instance, Solution solution, String employeeId) {
     Map<String, Shift> shifts = instance.getShifts();
     int days = solution.getHorizon();
-    for (int i = 0; i < days - 1; i++) {
-      // for each day except last one
+    for (int i = 0; i < days - 1; i++) {      // for each day except last one
+
       String currShift = solution.getShift(employeeId, i);
+
+      // do not check if employee is not working
+      if (currShift == null) {
+        continue;
+      }
+
       String nextShift = solution.getShift(employeeId, i+1);
       if (shifts.get(currShift).getNotFollowingShifts().contains(nextShift)) {
         return false;

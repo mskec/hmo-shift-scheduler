@@ -1,10 +1,11 @@
 package hr.fer.hmo;
 
 import hr.fer.hmo.data.Instance;
+import hr.fer.hmo.parser.InstanceParser;
 import hr.fer.hmo.problem.Solution;
-import hr.fer.hmo.problem.builder.SolutionBuilder;
 import hr.fer.hmo.problem.builder.SmartSolutionGenerator1;
 import hr.fer.hmo.problem.Validator;
+import hr.fer.hmo.problem.builder.SolutionBuilder;
 
 import java.io.FileNotFoundException;
 
@@ -15,22 +16,31 @@ public class Runner {
 
     System.out.println("Generating initial solution");
 
-    SolutionBuilder builder = new SolutionBuilder(instance, new SmartSolutionGenerator1());
+    Validator validator = new Validator();
+    SmartSolutionGenerator1 smartSolutionGenerator = new SmartSolutionGenerator1();
+
+    String employeeId = "A";
+//    Solution solution = new Solution(Arrays.asList(employeeId), instance.getHorizon());
+
     for (int i = 0; i < 100000; i++) {
-//      System.out.println("Case " + (i+1));
-      Solution solution = builder.build();
+      Solution solution = new SolutionBuilder(instance, smartSolutionGenerator).build();
 
-//      System.out.println("| Validating generated solution");
-      Validator validator = new Validator();
-      int brokenConstraintsCount = validator.validateHardConstraints(instance, solution);
-//      System.out.println("| Validating done " + fitness);
+      smartSolutionGenerator.generate(instance, solution, employeeId);
 
-//      if ((i+1) % 1000 == 0) {
-//        System.out.println("Case " + (i+1));
-//      }
+      if (!validator.validateShiftRotation(instance, solution, employeeId)) {
+        System.out.println("VIOLATED|SHIFT_ROTATION");
+      }
 
-      if (brokenConstraintsCount < 4) {
-        System.out.printf("Case %d: fitness %d\n", (i + 1), brokenConstraintsCount);
+      if (!validator.validateMaxShifts(instance, solution, employeeId)) {
+        System.out.println("VIOLATED|MAX_SHIFTS");
+      }
+
+      if (!validator.validateConsecutiveDaysOff(instance, solution, employeeId)) {
+        System.out.println("VIOLATED|DAYS_OFF");
+      }
+
+      if ((i+1) % 1000 == 0) {
+        System.out.printf("Case: %d\n", i + 1);
       }
     }
   }

@@ -1,4 +1,4 @@
-package hr.fer.hmo;
+package hr.fer.hmo.parser;
 
 import hr.fer.hmo.data.Instance;
 

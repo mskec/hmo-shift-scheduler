@@ -9,12 +9,16 @@ import java.util.Random;
 public class ShiftDistributor {
   private Random rand = new Random();
 
+  /**
+   * Roulette wheel distribution
+   */
   public String distributeShift(Map<String, Integer> shiftsCounter) {
-    int totalCount = 0;
+    int totalShiftCount = 0;
     for (String shiftId : shiftsCounter.keySet()) {
-      totalCount += shiftsCounter.get(shiftId);
+      totalShiftCount += shiftsCounter.get(shiftId);
     }
-    int chosenNumber = rand.nextInt(totalCount) + 1;
+
+    int chosenNumber = rand.nextInt(totalShiftCount) + 1;
     for (String shiftId : shiftsCounter.keySet()) {
       chosenNumber -= shiftsCounter.get(shiftId);
       if (chosenNumber <= 0) {
