@@ -2,7 +2,7 @@ package hr.fer.hmo.problem.builder;
 
 import hr.fer.hmo.data.Employee;
 import hr.fer.hmo.data.Instance;
-import hr.fer.hmo.problem.ShiftDistributer;
+import hr.fer.hmo.problem.ShiftDistributor;
 import hr.fer.hmo.problem.Solution;
 import hr.fer.hmo.utils.Utils;
 
@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class SmartSolutionGenerator1 implements SolutionGenerator {
 
-  private ShiftDistributer shiftDistributer = new ShiftDistributer();
+  private ShiftDistributor shiftDistributor = new ShiftDistributor();
 
   @Override
   public void generate(Instance instance, Solution solution, String employeeId) {
@@ -33,7 +33,7 @@ public class SmartSolutionGenerator1 implements SolutionGenerator {
         continue;
       }
 
-      String shiftId = shiftDistributer.distributeShift(employeeShifts);
+      String shiftId = shiftDistributor.distributeShift(employeeShifts);
       employeeShifts.put(shiftId, employeeShifts.get(shiftId) - 1);       // decrease chosen shift
       solution.setShift(employeeId, i, shiftId);
     }

@@ -6,10 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Created by dstankovic on 1/20/16.
- */
-public class WorkingDaysDistributer {
+public class WorkingDaysDistributor {
   private Random rand = new Random();
 
   public List<Integer> distribute(Employee employee, int horizon) {

@@ -6,11 +6,11 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShiftDistributerTest {
+public class ShiftDistributorTest {
 
   @Test
   public void testDistributeShift() throws Exception {
-    ShiftDistributer shiftDistributer = new ShiftDistributer();
+    ShiftDistributor shiftDistributor = new ShiftDistributor();
     Map<String, Integer> originalMap = new HashMap<>();
     Map<String, Integer> map = new HashMap<>();
     map.put("a1", 1);
@@ -24,7 +24,7 @@ public class ShiftDistributerTest {
     }
     Map<String, Integer> checkMap = new HashMap<>();
     for (int i = 4 * 182 + 2; i >= 1; i--) {
-      String shift = shiftDistributer.distributeShift(map);
+      String shift = shiftDistributor.distributeShift(map);
       map.put(shift, map.get(shift) - 1);
       if (!checkMap.containsKey(shift)) {
         checkMap.put(shift, 0);

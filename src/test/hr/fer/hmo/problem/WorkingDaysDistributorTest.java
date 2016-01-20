@@ -9,15 +9,15 @@ import java.util.List;
 /**
  * Created by dstankovic on 1/20/16.
  */
-public class WorkingDaysDistributerTest {
+public class WorkingDaysDistributorTest {
 
   @Test
   public void testDistribute() throws Exception {
-    WorkingDaysDistributer workingDaysDistributer = new WorkingDaysDistributer();
+    WorkingDaysDistributor workingDaysDistributor = new WorkingDaysDistributor();
     Employee employee = new Employee(null, null, 0, 0, 5, 2, 3, 0);
     int num = 50;
     for (int iter = 1000; iter >= 0; iter--) {
-      List<Integer> list = workingDaysDistributer.distribute(employee, num);
+      List<Integer> list = workingDaysDistributor.distribute(employee, num);
     System.out.println(list);
       int totalCount = 0;
       for (Integer i : list) {

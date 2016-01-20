@@ -6,7 +6,7 @@ import java.util.Random;
 /**
  * Solving hard constraint MAX_SHIFTS
  */
-public class ShiftDistributer {
+public class ShiftDistributor {
   private Random rand = new Random();
 
   public String distributeShift(Map<String, Integer> shiftsCounter) {
