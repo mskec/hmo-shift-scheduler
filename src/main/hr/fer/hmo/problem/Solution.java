@@ -43,4 +43,16 @@ public class Solution {
   public List<String> getEmployeeIds() {
     return employeeIds;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    for (String employeeId : employeeIds) {
+      for (int day = 0; day < horizon-1; day++) {
+        sb.append(getShift(employeeId, day)).append('\t');
+      }
+      sb.append(getShift(employeeId, horizon-1)).append('\n');
+    }
+    return sb.toString();
+  }
 }
