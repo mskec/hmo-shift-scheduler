@@ -4,6 +4,6 @@ import hr.fer.hmo.data.Instance;
 
 public interface SolutionGenerator {
 
-  Solution generate(Instance instance);
+  void generate(Instance instance, Solution solution, String employeeId);
 
 }
