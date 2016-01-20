@@ -49,10 +49,17 @@ public class Solution {
     StringBuilder sb = new StringBuilder();
     for (String employeeId : employeeIds) {
       for (int day = 0; day < horizon-1; day++) {
-        sb.append(getShift(employeeId, day)).append('\t');
+        sb.append(printString(getShift(employeeId, day))).append('\t');
       }
-      sb.append(getShift(employeeId, horizon-1)).append('\n');
+      sb.append(printString(getShift(employeeId, horizon-1))).append('\n');
     }
     return sb.toString();
+  }
+
+  private static String printString(String str) {
+    if (str == null) {
+      return " ";
+    }
+    return str;
   }
 }
