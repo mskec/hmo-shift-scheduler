@@ -48,10 +48,6 @@ public class SmartSolutionGenerator implements SolutionGenerator {
           }
           setSolution(solution, employeeId, lastDayOff+offset+1, daysOn, shiftId);
           offset += daysOn;
-          boolean broken = !validator.validateConsecutiveShifts(instance, solution, employeeId);
-          if (broken) {
-            System.out.println("Broken");
-          }
           if (i < size - 1) {
             // not last one
             int daysOffCount = list.get(i+1);
@@ -82,7 +78,7 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       smartSolutionGenerator.generate(instance, solution, employeeId);
       int brokenConstraintsCount = validator.validateHardConstraints(instance, solution);
       if (brokenConstraintsCount <= 0) {
-        System.out.println(brokenConstraintsCount + "  ----   " + validator.validateSoftConstraints(instance, solution));
+        System.out.println(brokenConstraintsCount);
         System.out.println(solution.toString());
       }
     }
