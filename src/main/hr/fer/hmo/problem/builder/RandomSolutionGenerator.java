@@ -1,10 +1,14 @@
-package hr.fer.hmo.problem;
+package hr.fer.hmo.problem.builder;
 
 import hr.fer.hmo.data.Instance;
+import hr.fer.hmo.problem.Solution;
 
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Pure random generator.
+ */
 public class RandomSolutionGenerator implements SolutionGenerator {
 
   private Random random = new Random();

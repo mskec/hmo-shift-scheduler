@@ -3,6 +3,9 @@ package hr.fer.hmo.problem;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Solving hard constraint MAX_SHIFTS
+ */
 public class ShiftDistributer {
   private Random rand = new Random();
 
