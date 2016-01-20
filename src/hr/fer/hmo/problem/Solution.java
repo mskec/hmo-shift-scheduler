@@ -4,21 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by dstankovic on 1/18/16.
- */
 public class Solution {
   private int fitness;
-  private Map<String, String[]> solution; // [employee][day]
+  private Map<String, String[]> employeeShifts;     // <employeeId, day>
   private List<String> employeeIds;
-  private int numberOfDays;
+  private int horizon;
 
-  public Solution(List<String> employeeIds, int numberOfDays) {
+  public Solution(List<String> employeeIds, int horizon) {
     this.employeeIds = employeeIds;
-    this.numberOfDays = numberOfDays;
-    solution = new HashMap<>(employeeIds.size());
+    this.horizon = horizon;
+    employeeShifts = new HashMap<>(employeeIds.size());
     for (String employeeId : employeeIds) {
-      solution.put(employeeId, new String[numberOfDays]);
+      employeeShifts.put(employeeId, new String[horizon]);
     }
     fitness = Integer.MAX_VALUE;
   }
@@ -32,11 +29,15 @@ public class Solution {
   }
 
   public String getShift(String employeeId, int day) {
-    return solution.get(employeeId)[day];
+    return employeeShifts.get(employeeId)[day];
   }
 
-  public int getNumberOfDays() {
-    return numberOfDays;
+  public void setShift(String employeeId, int day, String shiftId) {
+    employeeShifts.get(employeeId)[day] = shiftId;
+  }
+
+  public int getHorizon() {
+    return horizon;
   }
 
   public List<String> getEmployeeIds() {

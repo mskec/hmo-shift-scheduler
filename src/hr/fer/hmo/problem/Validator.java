@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by dstankovic on 1/18/16.
- */
 public class Validator {
   /**
    *
@@ -136,7 +133,7 @@ public class Validator {
 
 
   private boolean validateMaxWeekends(Instance instance, Solution solution) {
-    int days = solution.getNumberOfDays();
+    int days = solution.getHorizon();
     Map<String, Employee> employees = instance.getEmployees();
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
@@ -161,7 +158,7 @@ public class Validator {
 
 
   private boolean validateConsecutiveDaysOff(Instance instance, Solution solution) {
-    int days = solution.getNumberOfDays();
+    int days = solution.getHorizon();
     Map<String, Employee> employees = instance.getEmployees();
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
@@ -195,7 +192,7 @@ public class Validator {
 
 
   private boolean validateConsecutiveShifts(Instance instance, Solution solution) {
-    int days = solution.getNumberOfDays();
+    int days = solution.getHorizon();
     Map<String, Employee> employees = instance.getEmployees();
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
@@ -229,7 +226,7 @@ public class Validator {
 
 
   private boolean validateTotalMinutes(Instance instance, Solution solution) {
-    int days = solution.getNumberOfDays();
+    int days = solution.getHorizon();
     Map<String, Employee> employees = instance.getEmployees();
     Map<String, Shift> shifts = instance.getShifts();
     for (String employeeId : solution.getEmployeeIds()) {
@@ -251,7 +248,7 @@ public class Validator {
 
 
   private boolean validateMaxShifts(Instance instance, Solution solution) {
-    int days = solution.getNumberOfDays();
+    int days = solution.getHorizon();
     Map<String, Employee> employees = instance.getEmployees();
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
@@ -278,7 +275,7 @@ public class Validator {
 
   private boolean validateShiftRotation(Instance instance, Solution solution) {
     Map<String, Shift> shifts = instance.getShifts();
-    int days = solution.getNumberOfDays();
+    int days = solution.getHorizon();
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
       for (int i = 0; i < days - 1; i++) {
