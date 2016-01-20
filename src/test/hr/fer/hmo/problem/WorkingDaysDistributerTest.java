@@ -18,10 +18,10 @@ public class WorkingDaysDistributerTest {
     int num = 50;
     for (int iter = 1000; iter >= 0; iter--) {
       List<Integer> list = workingDaysDistributer.distribute(employee, num);
-//    System.out.println(list);
+    System.out.println(list);
       int totalCount = 0;
-      for (int i = list.size() - 2; i >= 0; i--) {
-        totalCount += list.get(i);
+      for (Integer i : list) {
+        totalCount += i;
       }
       Assert.assertTrue(totalCount <= num);
     }

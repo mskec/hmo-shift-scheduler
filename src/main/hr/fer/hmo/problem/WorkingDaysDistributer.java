@@ -30,6 +30,7 @@ public class WorkingDaysDistributer {
       list.add(daysOff);
       remainingDays -= num + daysOff;
     }
+    list.remove(list.size()-1);
     return list;
   }
 }
