@@ -73,8 +73,8 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     }
 
     int workingMinutesDiff = workingMinutes - maxWorkingMinutes;
-    List<ShiftChunk> originalShiftChunks = extractShiftChunks(solution, employeeId);
-    List<ShiftChunk> shiftChunks = extractBigShiftChunks(originalShiftChunks, employee.getMinConsecutiveShifts());
+    List<ShiftChunk> shiftChunks = extractShiftChunks(solution, employeeId);
+//    List<ShiftChunk> shiftChunks = extractBigShiftChunks(originalShiftChunks, employee.getMinConsecutiveShifts());
     while (!shiftChunks.isEmpty() && workingMinutesDiff > 0) {
       int chunkCount = shiftChunks.size();
       int weekendChunkIndex = -1;
@@ -91,22 +91,29 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       ShiftChunk shiftChunk = shiftChunks.get(weekendChunkIndex);
       int day;
       if (Utils.isWeekend(shiftChunk.getL())) {
-        shiftChunk.lTrim();
         day = shiftChunk.getL();
+        shiftChunk.lTrim();
       } else if (Utils.isWeekend(shiftChunk.getR())) {
-        shiftChunk.rTrim();
         day = shiftChunk.getR();
+        shiftChunk.rTrim();
       } else {
         if (rand.nextBoolean()) {
-          shiftChunk.lTrim();
           day = shiftChunk.getL();
+          shiftChunk.lTrim();
         } else {
-          shiftChunk.rTrim();
           day = shiftChunk.getR();
+          shiftChunk.rTrim();
         }
       }
+      String deletedShiftId = solution.getShift(employeeId, day);
       solution.setShift(employeeId, day, null);
-      if (shiftChunk.length() <= minConsecutiveShifts) {
+      workingMinutesDiff -= instance.getShifts().get(deletedShiftId).getLength();
+      if (shiftChunk.length() < minConsecutiveShifts) {
+        for (int j = shiftChunk.getL(); j <= shiftChunk.getR(); j++) {
+          deletedShiftId = solution.getShift(employeeId, j);
+          solution.setShift(employeeId, j, null);
+          workingMinutesDiff -= instance.getShifts().get(deletedShiftId).getLength();
+        }
         shiftChunks.remove(weekendChunkIndex);
       }
     }
