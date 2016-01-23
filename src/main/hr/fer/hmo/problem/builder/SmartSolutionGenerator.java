@@ -285,35 +285,53 @@ public class SmartSolutionGenerator implements SolutionGenerator {
 
 
   public static void main(String[] args) throws FileNotFoundException {
+    runSmartGenerator(true);
+  }
+
+  private static void runSmartGenerator(boolean print) throws FileNotFoundException {
     SmartSolutionGenerator smartSolutionGenerator = new SmartSolutionGenerator();
     Instance instance = InstanceParser.parse("instance.txt");
     List<String> employeeIds = instance.getEmployeeIds();
     Validator validator = new Validator();
-    Solution solution = new Solution(employeeIds, instance.getHorizon());
-    Set<String> employeeIdsSet = new HashSet<>(employeeIds);
-    Set<String> removedEmployeeIds = new HashSet<>();
-    while (!employeeIdsSet.isEmpty()) {
-      System.out.println(employeeIdsSet);
-      removedEmployeeIds.clear();
-      for (String employeeId : employeeIdsSet) {
-        System.out.println(employeeId);
-        for (int i = 0; i < 1000000; i++) {
-          smartSolutionGenerator.generate(instance, solution, employeeId);
-          int brokenConstraintsCount = validator.validateHardConstraints(instance, solution, employeeId);
-          if (brokenConstraintsCount <= 0) {
-            System.out.println(brokenConstraintsCount);
-            removedEmployeeIds.add(employeeId);
-            break;
+    Solution best = null;
+    for (int iter = 0; iter < 100; iter++) {
+      if (print) System.out.println("Iteration: " + iter);
+      Solution solution = new Solution(employeeIds, instance.getHorizon());
+      Set<String> employeeIdsSet = new HashSet<>(employeeIds);
+      Set<String> removedEmployeeIds = new HashSet<>();
+      while (!employeeIdsSet.isEmpty()) {
+//        System.out.println(employeeIdsSet);
+        removedEmployeeIds.clear();
+        for (String employeeId : employeeIdsSet) {
+//          System.out.println(employeeId);
+          for (int i = 0; i < 1000000; i++) {
+            smartSolutionGenerator.generate(instance, solution, employeeId);
+            int brokenConstraintsCount = validator.validateHardConstraints(instance, solution, employeeId);
+            if (brokenConstraintsCount <= 0) {
+//              System.out.println(brokenConstraintsCount);
+              removedEmployeeIds.add(employeeId);
+              break;
+            }
           }
         }
+        employeeIdsSet.removeAll(removedEmployeeIds);
+//        System.out.println(removedEmployeeIds);
       }
-      employeeIdsSet.removeAll(removedEmployeeIds);
-      System.out.println(removedEmployeeIds);
+//      validator.setPrint(true);
+      int brokenConstraintsCount = validator.validateHardConstraints(instance, solution);
+      if (print) System.out.println(brokenConstraintsCount);
+      int fitness = validator.validateSoftConstraints(instance, solution);
+      if (print) System.out.println(fitness);
+      solution.setFitness(fitness);
+      if (best == null || best.getFitness() > fitness) {
+        best = solution;
+      }
+      if (print) System.out.println("Fitness: " + fitness);
+      if (print) System.out.println();
     }
-    System.out.println("Final solution:");
-    System.out.println(solution);
-    validator.setPrint(true);
-    System.out.println(validator.validateHardConstraints(instance, solution));
-    System.out.println(validator.validateSoftConstraints(instance, solution));
+    if (print) System.out.println("Final solution:");
+    if (print) System.out.println(best);
+    if (print) System.out.println("\n\n\n");
+    if (print) System.out.println(best.getFitness());
   }
 }
