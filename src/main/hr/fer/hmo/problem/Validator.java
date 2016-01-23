@@ -353,7 +353,12 @@ public class Validator {
       minutesCount += length;
     }
     Employee employee = employees.get(employeeId);
-    if (minutesCount < employee.getMinTotalMinutes() || minutesCount > employee.getMaxTotalMinutes()) {
+    if (minutesCount < employee.getMinTotalMinutes()) {
+//      System.out.println("Min");
+      return false;
+    }
+    if (minutesCount > employee.getMaxTotalMinutes()) {
+//      System.out.println("Max");
       return false;
     }
     return true;
