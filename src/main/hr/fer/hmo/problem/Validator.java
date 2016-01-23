@@ -7,7 +7,18 @@ import java.util.List;
 import java.util.Map;
 
 public class Validator {
-  private static final boolean PRINT = false;
+  private boolean print = false;
+
+  public Validator() {
+  }
+
+  public Validator(boolean print) {
+    this.print = print;
+  }
+
+  public void setPrint(boolean print) {
+    this.print = print;
+  }
 
   /**
    *
@@ -19,31 +30,65 @@ public class Validator {
     int numberOfBrokenConstraints = 0;
     if (!validateShiftRotation(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|SHIFT_ROTATION");
+      if (print) System.out.println("Validator|SHIFT_ROTATION");
     }
     if (!validateMaxShifts(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|MAX_SHIFTS");
+      if (print) System.out.println("Validator|MAX_SHIFTS");
     }
     if (!validateTotalMinutes(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|TOTAL_MINUTES");
+      if (print) System.out.println("Validator|TOTAL_MINUTES");
     }
     if (!validateConsecutiveShifts(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|CONSECUTIVE_SHIFTS");
+      if (print) System.out.println("Validator|CONSECUTIVE_SHIFTS");
     }
     if (!validateConsecutiveDaysOff(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|CONSECUTIVE_DAYS_OFF");
+      if (print) System.out.println("Validator|CONSECUTIVE_DAYS_OFF");
     }
     if (!validateMaxWeekends(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|MAX_WEEKENDS");
+      if (print) System.out.println("Validator|MAX_WEEKENDS");
     }
     if (!validateDaysOff(instance, solution)) {
       numberOfBrokenConstraints++;
-      if (PRINT) System.out.println("Validator|DAYS_OFF");
+      if (print) System.out.println("Validator|DAYS_OFF");
+    }
+    return numberOfBrokenConstraints;
+  }
+
+
+  public int validateHardConstraints(Instance instance, Solution solution, String employeeId) {
+    int numberOfBrokenConstraints = 0;
+    if (!validateShiftRotation(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|SHIFT_ROTATION");
+    }
+    if (!validateMaxShifts(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|MAX_SHIFTS");
+    }
+    if (!validateTotalMinutes(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|TOTAL_MINUTES");
+    }
+    if (!validateConsecutiveShifts(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|CONSECUTIVE_SHIFTS");
+    }
+    if (!validateConsecutiveDaysOff(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|CONSECUTIVE_DAYS_OFF");
+    }
+    if (!validateMaxWeekends(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|MAX_WEEKENDS");
+    }
+    if (!validateDaysOff(instance, solution, employeeId)) {
+      numberOfBrokenConstraints++;
+      if (print) System.out.println("Validator|DAYS_OFF");
     }
     return numberOfBrokenConstraints;
   }

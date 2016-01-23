@@ -6,7 +6,6 @@ import hr.fer.hmo.parser.InstanceParser;
 import hr.fer.hmo.problem.builder.SolutionGenerator;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +16,7 @@ import java.util.Map;
 public class SmartSolutionGenerator implements SolutionGenerator {
   @Override
   public void generate(Instance instance, Solution solution, String employeeId) {
-    Validator validator = new Validator();
+    solution.anulateEmployeeShifts(employeeId);
     List<Integer> daysOff = instance.getEmployeeDaysOff(employeeId);
     Employee employee = instance.getEmployee(employeeId);
     WorkingDaysDistributor workingDaysDistributor = new WorkingDaysDistributor();
@@ -43,9 +42,6 @@ public class SmartSolutionGenerator implements SolutionGenerator {
           Integer daysOn = list.get(i);
           String shiftId = shiftDistributor.distributeShift(shiftsCounter);
           shiftsCounter.put(shiftId, shiftsCounter.get(shiftId)-daysOn);
-          if (daysOn > 5) {
-            System.out.println("Error");
-          }
           setSolution(solution, employeeId, lastDayOff+offset+1, daysOn, shiftId);
           offset += daysOn;
           if (i < size - 1) {
@@ -68,19 +64,29 @@ public class SmartSolutionGenerator implements SolutionGenerator {
 
   public static void main(String[] args) throws FileNotFoundException {
     SmartSolutionGenerator smartSolutionGenerator = new SmartSolutionGenerator();
-    List<String> employeeIds = new ArrayList<>(1);
-    String employeeId = "A";
-    employeeIds.add(employeeId);
     Instance instance = InstanceParser.parse("instance.txt");
+    List<String> employeeIds = instance.getEmployeeIds();
     Validator validator = new Validator();
-    for (int i = 0; i < 1000000; i++) {
-      Solution solution = new Solution(employeeIds, instance.getHorizon());
-      smartSolutionGenerator.generate(instance, solution, employeeId);
-      int brokenConstraintsCount = validator.validateHardConstraints(instance, solution);
-      if (brokenConstraintsCount <= 0) {
-        System.out.println(brokenConstraintsCount);
-        System.out.println(solution.toString());
+    Solution solution = new Solution(employeeIds, instance.getHorizon());
+    for (String employeeId : employeeIds) {
+      System.out.println(employeeId);
+      for (int i = 0; i < 100000; i++) {
+        smartSolutionGenerator.generate(instance, solution, employeeId);
+        int brokenConstraintsCount = validator.validateHardConstraints(instance, solution, employeeId);
+        if (brokenConstraintsCount <= 1) {
+          System.out.println();
+          System.out.println(brokenConstraintsCount);
+//          System.out.println(solution.toString());
+          if (brokenConstraintsCount == 0) break;
+        } else {
+//          System.out.print(brokenConstraintsCount + " ");
+        }
       }
     }
+    System.out.println("Final solution:");
+    System.out.println(solution);
+    validator.setPrint(true);
+    System.out.println(validator.validateHardConstraints(instance, solution));
+    System.out.println(validator.validateSoftConstraints(instance, solution));
   }
 }

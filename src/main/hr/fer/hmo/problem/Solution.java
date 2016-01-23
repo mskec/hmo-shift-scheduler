@@ -62,4 +62,11 @@ public class Solution {
     }
     return str;
   }
+
+  public void anulateEmployeeShifts(String employeeId) {
+    String[] shifts = employeeShifts.get(employeeId);
+    for (int i = shifts.length - 1; i >= 0; i--) {
+      shifts[i] = null;
+    }
+  }
 }
