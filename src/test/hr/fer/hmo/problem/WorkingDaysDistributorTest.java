@@ -15,7 +15,7 @@ public class WorkingDaysDistributorTest {
     int num = 50;
     for (int iter = 1000; iter >= 0; iter--) {
       List<Integer> list = workingDaysDistributor.distribute(employee, num);
-    System.out.println(list);
+      System.out.println(list);
       int totalCount = 0;
       for (Integer i : list) {
         totalCount += i;

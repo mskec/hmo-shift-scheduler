@@ -14,6 +14,7 @@ import java.util.*;
 public class SmartSolutionGenerator implements SolutionGenerator {
   @Override
   public void generate(Instance instance, Solution solution, String employeeId) {
+    Random rand = new Random();
     solution.anulateEmployeeShifts(employeeId);
     List<Integer> daysOff = instance.getEmployeeDaysOff(employeeId);
 //    daysOff = modifyDaysOff(instance, daysOff, employeeId);
@@ -35,23 +36,41 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       int gap = dayOff - lastDayOff - 1;
       if (gap >= minConsecutiveShifts) {
         List<Integer> list = workingDaysDistributor.distribute(employee, gap);
+        int possibleOffset = gap - listSum(list);
+        int iOffset = rand.nextInt(possibleOffset + 1);
         int size = list.size();
         int offset = 0;
         for (int i = 0; i < size; i+=2) {
           Integer daysOn = list.get(i);
           String shiftId = shiftDistributor.distributeShift(shiftsCounter);
           shiftsCounter.put(shiftId, shiftsCounter.get(shiftId)-daysOn);
-          setSolution(solution, employeeId, lastDayOff+offset+1, daysOn, shiftId);
+          setSolution(solution, employeeId, lastDayOff+offset+1+iOffset, daysOn, shiftId);
           offset += daysOn;
           if (i < size - 1) {
             // not last one
             int daysOffCount = list.get(i+1);
-            setSolution(solution, employeeId, lastDayOff+offset+1, daysOffCount, null);
+            setSolution(solution, employeeId, lastDayOff+offset+1+iOffset, daysOffCount, null);
             offset += daysOffCount;
           }
         }
       }
       lastDayOff = dayOff;
+    }
+  }
+
+
+  private static int listSum(List<Integer> list) {
+    int sum = 0;
+    for (Integer i : list) {
+      sum += i;
+    }
+    return sum;
+  }
+
+
+  private void setSolution(Solution solution, String employeeId, int firstDay, int daysOn, String shiftId) {
+    for (int i = 0; i < daysOn; i++) {
+      solution.setShift(employeeId, firstDay+i, shiftId);
     }
   }
 
@@ -125,13 +144,6 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       weekendsToRemove--;
     }
     return weekendsToRemove;
-  }
-
-
-  private void setSolution(Solution solution, String employeeId, int firstDay, int daysOn, String shiftId) {
-    for (int i = 0; i < daysOn; i++) {
-      solution.setShift(employeeId, firstDay+i, shiftId);
-    }
   }
 
 
