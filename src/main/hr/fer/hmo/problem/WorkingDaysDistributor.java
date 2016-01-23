@@ -14,13 +14,25 @@ public class WorkingDaysDistributor {
     int maxConsecutiveShifts = employee.getMaxConsecutiveShifts();
     int minConsecutiveDaysOff = employee.getMinConsecutiveDaysOff();
     int remainingDays = horizon;
+
     List<Integer> list = new ArrayList<>();
     while (remainingDays > 0) {
       if (remainingDays < minConsecutiveShifts) {
         break;
       }
+
       int max = Integer.min(maxConsecutiveShifts, remainingDays);
-      int num = rand.nextInt(max - minConsecutiveShifts + 1) + minConsecutiveShifts;
+      int num;
+      if (employee.getMaxTotalMinutes() > 50000) {
+        if (rand.nextDouble() > 0.1) {
+          num = max;
+        } else {
+          num = rand.nextInt(max - minConsecutiveShifts + 1) + minConsecutiveShifts;
+        }
+      } else {
+        num = rand.nextInt(max - minConsecutiveShifts + 1) + minConsecutiveShifts;
+      }
+
       list.add(num);
       list.add(minConsecutiveDaysOff);
       remainingDays -= num + minConsecutiveDaysOff;

@@ -12,16 +12,13 @@ import hr.fer.hmo.utils.Utils;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-/**
- * Created by dstankovic on 1/20/16.
- */
 public class SmartSolutionGenerator implements SolutionGenerator {
   @Override
   public void generate(Instance instance, Solution solution, String employeeId) {
     Random rand = new Random();
     solution.anulateEmployeeShifts(employeeId);
     List<Integer> daysOff = instance.getEmployeeDaysOff(employeeId);
-//    daysOff = modifyDaysOff(instance, daysOff, employeeId);
+
     Employee employee = instance.getEmployee(employeeId);
     WorkingDaysDistributor workingDaysDistributor = new WorkingDaysDistributor();
     ShiftDistributor shiftDistributor = new ShiftDistributor();
@@ -29,6 +26,7 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     int lastDayOff = -1;
     Map<String, Integer> shiftsCounter = new HashMap<>(employee.getMaxShifts());
     int daysOffSize = daysOff.size();
+
     for (int j = 0; j <= daysOffSize; j++) {
       Integer dayOff;
       if (j == daysOffSize) {
@@ -36,6 +34,7 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       } else {
         dayOff = daysOff.get(j);
       }
+
       // there is gap big enough between two days off
       int gap = dayOff - lastDayOff - 1;
       if (gap >= minConsecutiveShifts) {
@@ -290,7 +289,6 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     Instance instance = InstanceParser.parse("instance.txt");
     List<String> employeeIds = instance.getEmployeeIds();
     Validator validator = new Validator();
-//    validator.setPrint(true);
     Solution solution = new Solution(employeeIds, instance.getHorizon());
     Set<String> employeeIdsSet = new HashSet<>(employeeIds);
     Set<String> removedEmployeeIds = new HashSet<>();
@@ -303,13 +301,9 @@ public class SmartSolutionGenerator implements SolutionGenerator {
           smartSolutionGenerator.generate(instance, solution, employeeId);
           int brokenConstraintsCount = validator.validateHardConstraints(instance, solution, employeeId);
           if (brokenConstraintsCount <= 0) {
-            System.out.println();
             System.out.println(brokenConstraintsCount);
-//          System.out.println(solution.toString());
             removedEmployeeIds.add(employeeId);
             break;
-          } else if (brokenConstraintsCount > 1) {
-//          System.out.println(brokenConstraintsCount + " ");
           }
         }
       }
