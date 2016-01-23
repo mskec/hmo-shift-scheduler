@@ -13,4 +13,7 @@ public class Utils {
     return copiedMap;
   }
 
+  public static boolean isWeekend(int day) {
+    return day % 7 >= 5;
+  }
 }

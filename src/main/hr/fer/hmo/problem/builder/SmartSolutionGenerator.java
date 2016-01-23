@@ -1,9 +1,13 @@
-package hr.fer.hmo.problem;
+package hr.fer.hmo.problem.builder;
 
 import hr.fer.hmo.data.Employee;
 import hr.fer.hmo.data.Instance;
 import hr.fer.hmo.parser.InstanceParser;
-import hr.fer.hmo.problem.builder.SolutionGenerator;
+import hr.fer.hmo.problem.ShiftDistributor;
+import hr.fer.hmo.problem.Solution;
+import hr.fer.hmo.problem.Validator;
+import hr.fer.hmo.problem.WorkingDaysDistributor;
+import hr.fer.hmo.utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -56,6 +60,118 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       }
       lastDayOff = dayOff;
     }
+
+    // check if max total shifts constraint is broken
+    int workingMinutes = 0;
+    int horizon = instance.getHorizon();
+    int maxWorkingMinutes = employee.getMaxTotalMinutes();
+    for (int i = 0; i < horizon; i++) {
+      String shiftId = solution.getShift(employeeId, i);
+      if (shiftId != null) {
+        workingMinutes += instance.getShifts().get(shiftId).getLength();
+      }
+    }
+
+    int workingMinutesDiff = workingMinutes - maxWorkingMinutes;
+    List<ShiftChunk> originalShiftChunks = extractShiftChunks(solution, employeeId);
+    List<ShiftChunk> shiftChunks = extractBigShiftChunks(originalShiftChunks, employee.getMinConsecutiveShifts());
+    while (!shiftChunks.isEmpty() && workingMinutesDiff > 0) {
+      int i = rand.nextInt(shiftChunks.size());
+      ShiftChunk shiftChunk = shiftChunks.get(i);
+      int day;
+      if (Utils.isWeekend(shiftChunk.getL())) {
+        shiftChunk.lTrim();
+        day = shiftChunk.getL();
+      } else if (Utils.isWeekend(shiftChunk.getR())) {
+        shiftChunk.rTrim();
+        day = shiftChunk.getR();
+      } else {
+        if (rand.nextBoolean()) {
+          shiftChunk.lTrim();
+          day = shiftChunk.getL();
+        } else {
+          shiftChunk.rTrim();
+          day = shiftChunk.getR();
+        }
+      }
+      solution.setShift(employeeId, day, null);
+      if (shiftChunk.length() <= minConsecutiveShifts) {
+        shiftChunks.remove(i);
+      }
+    }
+  }
+
+
+  private static List<ShiftChunk> extractBigShiftChunks(List<ShiftChunk> shiftChunks, int minConsecutiveShifts) {
+    List<ShiftChunk> list = new ArrayList<>(shiftChunks.size());
+    for (ShiftChunk chunk : shiftChunks) {
+      if (chunk.length() > minConsecutiveShifts) {
+        list.add(chunk);
+      }
+    }
+    return list;
+  }
+
+
+  private static class ShiftChunk {
+    private int l;
+    private int r;
+
+    public ShiftChunk(int l, int r) {
+      this.l = l;
+      this.r = r;
+      if (r < l) {
+        throw new IllegalArgumentException("r < l");
+      }
+    }
+
+    public int getL() {
+      return l;
+    }
+
+    public int getR() {
+      return r;
+    }
+
+    public int length() {
+      return r - l + 1;
+    }
+
+    public void lTrim() {
+      l++;
+    }
+
+    public void rTrim() {
+      r--;
+    }
+  }
+
+  private static List<ShiftChunk> extractShiftChunks(Solution solution, String employeeId) {
+    List<ShiftChunk> shiftChunks = new ArrayList<>();
+    int start = 0;
+    while (solution.getShift(employeeId, start) == null) {
+      start++;
+    }
+    int horizon = solution.getHorizon();
+    for (int i = start; i < horizon; i++) {
+      String shiftId = solution.getShift(employeeId, i);
+      if (shiftId == null) {
+        // first day off in series
+        ShiftChunk shiftChunk = new ShiftChunk(start, i-1);
+        shiftChunks.add(shiftChunk);
+        i++;
+
+        // move to next start of chunk
+        while (i < horizon && solution.getShift(employeeId, i) == null) {
+          i++;
+        }
+        start = i;
+      }
+    }
+    if (start < horizon) {
+      shiftChunks.add(new ShiftChunk(start, horizon-1));
+    }
+    return shiftChunks;
   }
 
 
