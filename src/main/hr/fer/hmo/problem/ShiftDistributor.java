@@ -1,6 +1,6 @@
 package hr.fer.hmo.problem;
 
-import hr.fer.hmo.problem.builder.SmartSolutionGenerator1.EmployeeShift;
+import hr.fer.hmo.problem.EmployeeShifts.EmployeeShiftData;
 
 import java.util.List;
 import java.util.Map;
@@ -32,14 +32,14 @@ public class ShiftDistributor {
     return null;
   }
 
-  public String distributeShift(List<EmployeeShift> employeeShifts) {
+  public String distributeShift(List<EmployeeShiftData> employeeShifts) {
     int totalShiftCount = 0;
-    for (EmployeeShift employeeShift : employeeShifts) {
+    for (EmployeeShiftData employeeShift : employeeShifts) {
       totalShiftCount += employeeShift.remainingShifts;
     }
 
     int chosenNumber = random.nextInt(totalShiftCount) + 1;
-    for (EmployeeShift employeeShift : employeeShifts) {
+    for (EmployeeShiftData employeeShift : employeeShifts) {
       chosenNumber -= employeeShift.remainingShifts;
       if (chosenNumber <= 0) {
         return employeeShift.shiftId;
