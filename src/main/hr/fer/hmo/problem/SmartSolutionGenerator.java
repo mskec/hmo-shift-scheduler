@@ -154,20 +154,29 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     Validator validator = new Validator();
 //    validator.setPrint(true);
     Solution solution = new Solution(employeeIds, instance.getHorizon());
-    for (String employeeId : employeeIds) {
-      System.out.println(employeeId);
-      for (int i = 0; i < 1000000; i++) {
-        smartSolutionGenerator.generate(instance, solution, employeeId);
-        int brokenConstraintsCount = validator.validateHardConstraints(instance, solution, employeeId);
-        if (brokenConstraintsCount <= 0) {
-          System.out.println();
-          System.out.println(brokenConstraintsCount);
+    Set<String> employeeIdsSet = new HashSet<>(employeeIds);
+    Set<String> removedEmployeeIds = new HashSet<>();
+    while (!employeeIdsSet.isEmpty()) {
+      System.out.println(employeeIdsSet);
+      removedEmployeeIds.clear();
+      for (String employeeId : employeeIdsSet) {
+        System.out.println(employeeId);
+        for (int i = 0; i < 1000000; i++) {
+          smartSolutionGenerator.generate(instance, solution, employeeId);
+          int brokenConstraintsCount = validator.validateHardConstraints(instance, solution, employeeId);
+          if (brokenConstraintsCount <= 0) {
+            System.out.println();
+            System.out.println(brokenConstraintsCount);
 //          System.out.println(solution.toString());
-          break;
-        } else if (brokenConstraintsCount > 1) {
+            removedEmployeeIds.add(employeeId);
+            break;
+          } else if (brokenConstraintsCount > 1) {
 //          System.out.println(brokenConstraintsCount + " ");
+          }
         }
       }
+      employeeIdsSet.removeAll(removedEmployeeIds);
+      System.out.println(removedEmployeeIds);
     }
     System.out.println("Final solution:");
     System.out.println(solution);
