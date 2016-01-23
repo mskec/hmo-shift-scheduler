@@ -16,16 +16,14 @@ public class WorkingDaysDistributor {
     int remainingDays = horizon;
     List<Integer> list = new ArrayList<>();
     while (remainingDays > 0) {
-      int min = minConsecutiveShifts;
-      if (remainingDays < min) {
+      if (remainingDays < minConsecutiveShifts) {
         break;
       }
       int max = Integer.min(maxConsecutiveShifts, remainingDays);
-      int num = rand.nextInt(max - min + 1) + min;
+      int num = rand.nextInt(max - minConsecutiveShifts + 1) + minConsecutiveShifts;
       list.add(num);
-      int daysOff = minConsecutiveDaysOff; // add random number to this variable
-      list.add(daysOff);
-      remainingDays -= num + daysOff;
+      list.add(minConsecutiveDaysOff);
+      remainingDays -= num + minConsecutiveDaysOff;
     }
     list.remove(list.size()-1);
     return list;

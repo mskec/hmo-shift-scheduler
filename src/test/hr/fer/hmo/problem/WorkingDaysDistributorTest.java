@@ -6,9 +6,6 @@ import org.junit.Test;
 
 import java.util.List;
 
-/**
- * Created by dstankovic on 1/20/16.
- */
 public class WorkingDaysDistributorTest {
 
   @Test
@@ -25,6 +22,5 @@ public class WorkingDaysDistributorTest {
       }
       Assert.assertTrue(totalCount <= num);
     }
-//    System.out.println(totalCount);
   }
 }

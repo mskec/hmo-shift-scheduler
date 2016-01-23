@@ -11,7 +11,7 @@ public class Instance {
   private int horizon;
   private Map<String, Shift> shifts;              // <shiftId, Shift>
   private List<Employee> employeesList;
-  private Map<String, Employee> employees;     // <employeeId, Employee>
+  private Map<String, Employee> employees;        // <employeeId, Employee>
   private Map<String, DaysOff> employeeDaysOff;   // <employeeId, DaysOff>
   private List<ShiftRequest> shiftOnRequests;
   private List<ShiftRequest> shiftOffRequests;

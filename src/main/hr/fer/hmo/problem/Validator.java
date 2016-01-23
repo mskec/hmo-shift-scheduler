@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Validator {
-  private boolean print = false;
+  private boolean print;
 
   public Validator() {
+    this(false);
   }
 
   public Validator(boolean print) {
@@ -110,21 +111,23 @@ public class Validator {
 
 
   // SOFT CONSTRAINTS
-
   private int validateShiftCovers(Instance instance, Solution solution) {
     List<ShiftCover> shiftCovers = instance.getShiftCovers();
     int totalWeight = 0;
+
     for (ShiftCover shiftCover : shiftCovers) {
       int day = shiftCover.getDay();
       String shift = shiftCover.getShiftId();
       int requirement = shiftCover.getRequirement();
       int count = 0;
+
       for (String employeeId : solution.getEmployeeIds()) {
         // for each employee
         if (shift.equals(solution.getShift(employeeId, day))) {
           count++;
         }
       }
+
       if (count < requirement) {
         // not enough employees in a shift
         totalWeight += (requirement - count) * shiftCover.getWeightUnder();
@@ -133,6 +136,7 @@ public class Validator {
         totalWeight += (count - requirement) * shiftCover.getWeightOver();
       }
     }
+
     return totalWeight;
   }
 
@@ -140,12 +144,13 @@ public class Validator {
   private int validateShiftOffRequests(Instance instance, Solution solution) {
     List<ShiftRequest> shiftRequests = instance.getShiftOffRequests();
     int totalWeight = 0;
-    for (ShiftRequest shiftRequest : shiftRequests) {
-      // for each shift request
+
+    for (ShiftRequest shiftRequest : shiftRequests) {     // for each shift request
       String employeeId = shiftRequest.getEmployeeId();
       int day = shiftRequest.getDay();
-      String requestedShift = shiftRequest.getShiftId();
       String shift = solution.getShift(employeeId, day);
+      String requestedShift = shiftRequest.getShiftId();
+
       if (requestedShift.equals(shift)) {
         totalWeight += shiftRequest.getWeight();
       }
@@ -157,23 +162,25 @@ public class Validator {
   private int validateShiftOnRequests(Instance instance, Solution solution) {
     List<ShiftRequest> shiftRequests = instance.getShiftOnRequests();
     int totalWeight = 0;
-    for (ShiftRequest shiftRequest : shiftRequests) {
-      // for each shift request
+
+    for (ShiftRequest shiftRequest : shiftRequests) {     // for each shift request
       String employeeId = shiftRequest.getEmployeeId();
       int day = shiftRequest.getDay();
-      String requestedShift = shiftRequest.getShiftId();
       String shift = solution.getShift(employeeId, day);
+      String requestedShift = shiftRequest.getShiftId();
+
       if (!requestedShift.equals(shift)) {
         totalWeight += shiftRequest.getWeight();
       }
     }
+
     return totalWeight;
   }
 
 
   // HARD CONSTRAINTS
 
-  private boolean validateDaysOff(Instance instance, Solution solution) {
+  public boolean validateDaysOff(Instance instance, Solution solution) {
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
       if (!validateDaysOff(instance, solution, employeeId)) {
@@ -215,6 +222,7 @@ public class Validator {
     Employee employee = employees.get(employeeId);
     int maxWeekends = employee.getMaxWeekends();
     int workingWeekends = 0;
+
     for (int i = 5; i < days; i+=7) {
       // for each saturday
       String saturdayShift = solution.getShift(employeeId, i);
@@ -224,14 +232,12 @@ public class Validator {
         workingWeekends++;
       }
     }
-    if (workingWeekends > maxWeekends) {
-      return false;
-    }
-    return true;
+
+    return workingWeekends <= maxWeekends;
   }
 
 
-  private boolean validateConsecutiveDaysOff(Instance instance, Solution solution) {
+  public boolean validateConsecutiveDaysOff(Instance instance, Solution solution) {
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
       if (!validateConsecutiveDaysOff(instance, solution, employeeId)) {
@@ -249,8 +255,11 @@ public class Validator {
     int minConsecutiveDaysOff = employee.getMinConsecutiveDaysOff();
     int streak = 0;
     int start = 0;
-    while (solution.getShift(employeeId, start) == null) {
+    while (start < days && solution.getShift(employeeId, start) == null) {
       start++;
+    }
+    if (start >= days) {
+      return true;
     }
     for (int i = start; i < days; i++) {
       // for each day
@@ -351,7 +360,7 @@ public class Validator {
   }
 
 
-  private boolean validateMaxShifts(Instance instance, Solution solution) {
+  public boolean validateMaxShifts(Instance instance, Solution solution) {
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
       if (!validateMaxShifts(instance, solution, employeeId)) {
@@ -391,7 +400,7 @@ public class Validator {
   }
 
 
-  private boolean validateShiftRotation(Instance instance, Solution solution) {
+  public boolean validateShiftRotation(Instance instance, Solution solution) {
     for (String employeeId : solution.getEmployeeIds()) {
       // for each employee
       if (!validateShiftRotation(instance, solution, employeeId)) {

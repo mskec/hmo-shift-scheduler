@@ -19,23 +19,18 @@ public class Runner {
     Validator validator = new Validator();
     SmartSolutionGenerator1 smartSolutionGenerator = new SmartSolutionGenerator1();
 
-    String employeeId = "A";
-//    Solution solution = new Solution(Arrays.asList(employeeId), instance.getHorizon());
-
     for (int i = 0; i < 100000; i++) {
       Solution solution = new SolutionBuilder(instance, smartSolutionGenerator).build();
 
-//      smartSolutionGenerator.generate(instance, solution, employeeId);
-
-      if (!validator.validateShiftRotation(instance, solution, employeeId)) {
+      if (!validator.validateShiftRotation(instance, solution)) {
         System.out.println("VIOLATED|SHIFT_ROTATION");
       }
 
-      if (!validator.validateMaxShifts(instance, solution, employeeId)) {
+      if (!validator.validateMaxShifts(instance, solution)) {
         System.out.println("VIOLATED|MAX_SHIFTS");
       }
 
-      if (!validator.validateConsecutiveDaysOff(instance, solution, employeeId)) {
+      if (!validator.validateDaysOff(instance, solution)) {
         System.out.println("VIOLATED|DAYS_OFF");
       }
 
