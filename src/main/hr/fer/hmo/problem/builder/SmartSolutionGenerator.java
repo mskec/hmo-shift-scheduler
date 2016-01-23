@@ -76,8 +76,19 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     List<ShiftChunk> originalShiftChunks = extractShiftChunks(solution, employeeId);
     List<ShiftChunk> shiftChunks = extractBigShiftChunks(originalShiftChunks, employee.getMinConsecutiveShifts());
     while (!shiftChunks.isEmpty() && workingMinutesDiff > 0) {
-      int i = rand.nextInt(shiftChunks.size());
-      ShiftChunk shiftChunk = shiftChunks.get(i);
+      int chunkCount = shiftChunks.size();
+      int weekendChunkIndex = -1;
+      for (int i = chunkCount-1; i >= 0; i--) {
+        if (shiftChunks.get(i).isBorderWeekend()) {
+          weekendChunkIndex = i;
+          break;
+        }
+      }
+      if (weekendChunkIndex < 0) {
+        // none of the chunks border is weekend
+        weekendChunkIndex = rand.nextInt(chunkCount);
+      }
+      ShiftChunk shiftChunk = shiftChunks.get(weekendChunkIndex);
       int day;
       if (Utils.isWeekend(shiftChunk.getL())) {
         shiftChunk.lTrim();
@@ -96,7 +107,7 @@ public class SmartSolutionGenerator implements SolutionGenerator {
       }
       solution.setShift(employeeId, day, null);
       if (shiftChunk.length() <= minConsecutiveShifts) {
-        shiftChunks.remove(i);
+        shiftChunks.remove(weekendChunkIndex);
       }
     }
   }
@@ -143,6 +154,10 @@ public class SmartSolutionGenerator implements SolutionGenerator {
 
     public void rTrim() {
       r--;
+    }
+
+    public boolean isBorderWeekend() {
+      return Utils.isWeekend(l) || Utils.isWeekend(r);
     }
   }
 
