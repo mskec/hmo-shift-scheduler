@@ -11,6 +11,10 @@ import hr.fer.hmo.utils.Utils;
 
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class SmartSolutionGenerator implements SolutionGenerator {
   @Override
@@ -285,16 +289,44 @@ public class SmartSolutionGenerator implements SolutionGenerator {
 
 
   public static void main(String[] args) throws FileNotFoundException {
-    runSmartGenerator(true);
+    int cpuCors = Runtime.getRuntime().availableProcessors();
+    System.out.println(cpuCors);
+    ExecutorService executor = Executors.newFixedThreadPool(cpuCors);
+    int solsSize = cpuCors * 4;
+    BlockingQueue<Solution> solutionQueue = new LinkedBlockingQueue<>(solsSize);
+    for (int i = 0; i < solsSize; i++) {
+      Runnable worker = () -> {
+        try {
+          runSmartGenerator(false, solutionQueue);
+        } catch (FileNotFoundException e) {
+          e.printStackTrace();
+        }
+      };
+      executor.execute(worker);
+    }
+    executor.shutdown();
+    while (!executor.isTerminated()) {
+    }
+    System.out.println("Everything is done");
+    Solution best = null;
+    for (Solution sol : solutionQueue) {
+      if (best == null || sol.getFitness() < best.getFitness()) {
+        best = sol;
+      }
+    }
+    System.out.println("Best solution:");
+    System.out.println(best.toString());
+    System.out.println("\n\n\n");
+    System.out.println(best.getFitness());
   }
 
-  private static void runSmartGenerator(boolean print) throws FileNotFoundException {
+  private static void runSmartGenerator(boolean print, BlockingQueue<Solution> solsQ) throws FileNotFoundException {
     SmartSolutionGenerator smartSolutionGenerator = new SmartSolutionGenerator();
     Instance instance = InstanceParser.parse("instance.txt");
     List<String> employeeIds = instance.getEmployeeIds();
     Validator validator = new Validator();
     Solution best = null;
-    for (int iter = 0; iter < 100; iter++) {
+    for (int iter = 0; iter < 30; iter++) {
       if (print) System.out.println("Iteration: " + iter);
       Solution solution = new Solution(employeeIds, instance.getHorizon());
       Set<String> employeeIdsSet = new HashSet<>(employeeIds);
@@ -333,5 +365,6 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     if (print) System.out.println(best);
     if (print) System.out.println("\n\n\n");
     if (print) System.out.println(best.getFitness());
+    solsQ.add(best);
   }
 }
