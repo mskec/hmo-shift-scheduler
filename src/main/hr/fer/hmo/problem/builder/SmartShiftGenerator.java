@@ -2,18 +2,19 @@ package hr.fer.hmo.problem.builder;
 
 import hr.fer.hmo.data.Employee;
 import hr.fer.hmo.data.Instance;
+import hr.fer.hmo.parser.InstanceParser;
 import hr.fer.hmo.problem.EmployeeShifts;
 import hr.fer.hmo.problem.ShiftDistributor;
 import hr.fer.hmo.problem.Solution;
+import hr.fer.hmo.problem.Validator;
 
+import java.io.FileNotFoundException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-/**
- * This generator is taking in to account hard constraints:
- * DAYS_OFF and MAX_SHIFTS
- */
-public class SmartSolutionGenerator1 implements SolutionGenerator {
+
+public class SmartShiftGenerator implements SolutionGenerator {
 
   private ShiftDistributor shiftDistributor = new ShiftDistributor();
 
@@ -22,14 +23,13 @@ public class SmartSolutionGenerator1 implements SolutionGenerator {
     int horizon = solution.getHorizon();
 
     Employee employee = instance.getEmployee(employeeId);
-    Set<Integer> employeesDaysOff = new HashSet<>(instance.getEmployeeDaysOff(employeeId));
     EmployeeShifts employeeShifts = new EmployeeShifts(instance.getShifts(), employee.getMaxShifts());
 
     String previousShiftId = "";
     for (int i = 0; i < horizon; i++) {
-      // Hard constraint DAYS_OFF
-      if (employeesDaysOff.contains(i)) {
-        previousShiftId = "";
+
+      // Skip days off
+      if (solution.getShift(employeeId, i) == null) {
         continue;
       }
 
