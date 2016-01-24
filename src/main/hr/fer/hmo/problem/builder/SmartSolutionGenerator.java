@@ -288,11 +288,15 @@ public class SmartSolutionGenerator implements SolutionGenerator {
   }
 
 
+  private static final int ITERATIONS = 30;
+  private static final int PARALLEL_COEF = 4;
+
+
   public static void main(String[] args) throws FileNotFoundException {
     int cpuCors = Runtime.getRuntime().availableProcessors();
     System.out.println(cpuCors);
     ExecutorService executor = Executors.newFixedThreadPool(cpuCors);
-    int solsSize = cpuCors * 4;
+    int solsSize = cpuCors * PARALLEL_COEF;
     BlockingQueue<Solution> solutionQueue = new LinkedBlockingQueue<>(solsSize);
     for (int i = 0; i < solsSize; i++) {
       Runnable worker = () -> {
@@ -326,7 +330,7 @@ public class SmartSolutionGenerator implements SolutionGenerator {
     List<String> employeeIds = instance.getEmployeeIds();
     Validator validator = new Validator();
     Solution best = null;
-    for (int iter = 0; iter < 30; iter++) {
+    for (int iter = 0; iter < ITERATIONS; iter++) {
       if (print) System.out.println("Iteration: " + iter);
       Solution solution = new Solution(employeeIds, instance.getHorizon());
       Set<String> employeeIdsSet = new HashSet<>(employeeIds);
